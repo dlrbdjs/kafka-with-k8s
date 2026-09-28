@@ -71,6 +71,6 @@ public class HealthCheckController {
 
     @GetMapping("/health/app")
     public String healthCheck() {
-        return "argo cd success";
+        return "ci test";
     }
 }
