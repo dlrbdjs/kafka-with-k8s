@@ -1,0 +1,21 @@
+server:
+  port: ${SERVER_PORT:8080}
+spring:
+  application:
+    name: read
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    consumer:
+      group-id: ${KAFKA_CONSUMER_GROUP_ID}
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  mongodb:
+    uri: ${MONGODB_URI}
+
+app:
+  kafka:
+    topic: ${KAFKA_TOPIC}
+  mongodb:
+    database: ${MONGODB_DATABASE}
+    collection: ${MONGODB_COLLECTION}

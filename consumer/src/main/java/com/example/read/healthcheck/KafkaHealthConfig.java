@@ -1,0 +1,17 @@
+package com.example.read.healthcheck;
+
+import org.apache.kafka.clients.admin.AdminClient;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.core.KafkaAdmin;
+
+@Configuration
+public class KafkaHealthConfig {
+
+    @Bean(destroyMethod = "close")
+    public AdminClient kafkaHealthAdminClient(KafkaAdmin kafkaAdmin) {
+        return AdminClient.create(
+                kafkaAdmin.getConfigurationProperties()
+        );
+    }
+}

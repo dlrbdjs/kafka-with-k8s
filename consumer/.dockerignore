@@ -1,0 +1,15 @@
+.gradle/
+
+build/*
+!build/libs/
+build/libs/*
+!build/libs/*SNAPSHOT.jar
+
+.idea/
+*.iml
+.git/
+.gitignore
+.env
+.env.*
+Dockerfile*
+HELP.md
