@@ -64,7 +64,7 @@ jobs:
           tags: gyueon/testproducer:sha-${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-  
+
   update-manifest:
     name: Producer 매니페스트 업데이트
     needs: producer-ci
@@ -93,8 +93,8 @@ jobs:
       - name: 최신 main 브랜치 Checkout
         uses: actions/checkout@v7
         with:
-        ref: main
-        fetch-depth: 0
+          ref: main
+          fetch-depth: 0
 
       # 이미지 태그를 변경하기 위한 Kustomize CLI 설치
       - name: Kustomize 설치
@@ -139,5 +139,3 @@ jobs:
             -m "chore: update producer image to sha-${{ github.sha }}"
 
           git push origin main
-
-  
