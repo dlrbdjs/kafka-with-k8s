@@ -9,7 +9,7 @@ resources:
 images:
 - name: gyueon/testconsumer
   newName: gyueon/testconsumer
-  newTag: sha-b25b6c067fdbf4708a37d4876cbc0baee84d87de
+  newTag: sha-056897c955387c2e02ab590a8e12f9d839a5a41c
 - name: gyueon/testproducer
   newName: gyueon/testproducer
   newTag: sha-056897c955387c2e02ab590a8e12f9d839a5a41c
