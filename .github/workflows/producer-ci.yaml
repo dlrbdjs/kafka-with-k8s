@@ -64,10 +64,10 @@ jobs:
           tags: gyueon/testproducer:sha-${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
+  
   update-manifest:
-    name: Consumer 매니페스트 업데이트
-    needs: consumer-ci
+    name: Producer 매니페스트 업데이트
+    needs: producer-ci
 
     # kustomization.yaml을 수정하고 다시 Push하기 위한 권한
     permissions:
@@ -86,15 +86,15 @@ jobs:
 
     steps:
       # Job 시작 확인
-      - name: Consumer 매니페스트 업데이트 시작
-        run: echo "Consumer 매니페스트 업데이트를 시작합니다."
+      - name: Producer 매니페스트 업데이트 시작
+        run: echo "Producer 매니페스트 업데이트를 시작합니다."
 
       # Job이 실행되는 시점의 최신 main 브랜치 가져오기
       - name: 최신 main 브랜치 Checkout
         uses: actions/checkout@v7
         with:
-          ref: main
-          fetch-depth: 0
+        ref: main
+        fetch-depth: 0
 
       # 이미지 태그를 변경하기 위한 Kustomize CLI 설치
       - name: Kustomize 설치
@@ -107,12 +107,12 @@ jobs:
 
           kustomize version
 
-      # Consumer 이미지 태그를 현재 Git commit SHA로 변경
-      - name: Consumer 이미지 태그 변경
+      # Producer 이미지 태그를 현재 Git commit SHA로 변경
+      - name: Producer 이미지 태그 변경
         working-directory: kubernetes/overlays/local
         run: |
           kustomize edit set image \
-            gyueon/testproducer=gyueon/testproducer:sha-${{ github.sha }}
+          gyueon/testproducer=gyueon/testproducer:sha-${{ github.sha }}
 
       # 변경된 kustomization.yaml이 정상적으로 렌더링되는지 확인
       - name: Kustomize 렌더링 결과 검증
@@ -121,14 +121,14 @@ jobs:
           kustomize build .
 
       # 변경된 kustomization.yaml을 Git에 Commit하고 Push
-      - name: Consumer 매니페스트 Commit 및 Push
+      - name: Producer 매니페스트 Commit 및 Push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email \
             "41898282+github-actions[bot]@users.noreply.github.com"
 
           git add \
-            kubernetes/overlays/local/kustomization.yaml
+          kubernetes/overlays/local/kustomization.yaml
 
           if git diff --cached --quiet; then
             echo "변경된 매니페스트가 없습니다."
@@ -136,6 +136,8 @@ jobs:
           fi
 
           git commit \
-            -m "chore: update consumer image to sha-${{ github.sha }}"
+            -m "chore: update producer image to sha-${{ github.sha }}"
 
           git push origin main
+
+  
