@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: project
+
+resources:
+- ../../base
+- ingress.yaml
+images:
+- name: gyueon/testconsumer
+  newName: gyueon/testconsumer
+  newTag: sha-b25b6c067fdbf4708a37d4876cbc0baee84d87de
+- name: gyueon/testproducer
+  newName: gyueon/testproducer
+  newTag: sha-bd17806abc16d0a5db8b075ad9d074f8d3244424

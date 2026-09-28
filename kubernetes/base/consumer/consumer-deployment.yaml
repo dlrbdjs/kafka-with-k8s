@@ -1,0 +1,121 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consumer-deployment
+  namespace: project
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: consumer-app
+
+  template:
+    metadata:
+      labels:
+        app: consumer-app
+
+    spec:
+      initContainers:
+
+        # 1. MongoDB 준비 대기
+        - name: wait-for-mongodb
+          image: mongo:8.0
+
+          command:
+            - sh
+            - -c
+            - |
+              count=0
+
+              until mongosh \
+                --host mongodb \
+                --port 27017 \
+                --eval 'db.runCommand({ ping: 1 })' \
+                >/dev/null 2>&1
+              do
+                count=$((count + 1))
+
+                if [ "$count" -ge 120 ]; then
+                  echo "MongoDB wait timed out."
+                  exit 1
+                fi
+
+                echo "Waiting for MongoDB. Retrying in 5s..."
+                sleep 5
+              done
+
+              echo "MongoDB ready."
+              exit 0
+
+
+        # 2. Kafka 준비 대기
+        - name: wait-for-kafka
+          image: apache/kafka:4.3.1
+
+          command:
+            - sh
+            - -c
+            - |
+              count=0
+
+              until /opt/kafka/bin/kafka-broker-api-versions.sh \
+                --bootstrap-server kafka:9092 \
+                >/dev/null 2>&1
+              do
+                count=$((count + 1))
+
+                if [ "$count" -ge 120 ]; then
+                  echo "Kafka wait timed out."
+                  exit 1
+                fi
+
+                echo "Waiting for Kafka. Retrying in 5s..."
+                sleep 5
+              done
+
+              echo "Kafka ready."
+              exit 0
+
+
+      containers:
+        - name: consumer-container
+          image: gyueon/testconsumer:latest
+
+          ports:
+            - containerPort: 8080
+
+          envFrom:
+            - configMapRef:
+                name: consumer-configmap
+
+
+          livenessProbe:
+            httpGet:
+              path: /health/app
+              port: 8080
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+            successThreshold: 1
+
+
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 8080
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
+            successThreshold: 1
+
+
+          startupProbe:
+            httpGet:
+              path: /health/app
+              port: 8080
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 60
+            successThreshold: 1

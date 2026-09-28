@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-deployment
+  namespace: project
+spec:
+  replicas: 1
+
+  strategy:
+    type: Recreate
+
+  selector:
+    matchLabels:
+      app: kafka
+
+  template:
+    metadata:
+      labels:
+        app: kafka
+
+    spec:
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+
+      containers:
+        - name: kafka-container
+          image: apache/kafka:4.3.1
+
+          ports:
+            - containerPort: 9092
+            - containerPort: 9093
+
+          envFrom:
+            - configMapRef:
+                name: kafka-configmap
+
+          volumeMounts:
+            - name: kafka-data
+              mountPath: /var/lib/kafka/data
+
+      volumes:
+        - name: kafka-data
+          persistentVolumeClaim:
+            claimName: kafka-longhorn-pvc

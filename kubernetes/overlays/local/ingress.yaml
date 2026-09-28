@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cqrs-ingress
+  namespace: project
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /cqrs/book
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: book.com
+      http:
+        paths:
+          - path: /write
+            pathType: Prefix
+            backend:
+              service:
+                name: producer
+                port:
+                  number: 8080
+          - path: /read
+            pathType: Prefix
+            backend:
+              service:
+                name: consumer
+                port:
+                  number: 8080

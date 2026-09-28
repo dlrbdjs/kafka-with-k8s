@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: consumer-configmap
+  namespace: project
+data:
+  SERVER_PORT: "8080"
+  KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
+  KAFKA_TOPIC: "cqrs-topic"
+  KAFKA_CONSUMER_GROUP_ID: "read"
+  MONGODB_URI: "mongodb://mongodb:27017/cqrs"
+  MONGODB_DATABASE: "cqrs"
+  MONGODB_COLLECTION: "books"

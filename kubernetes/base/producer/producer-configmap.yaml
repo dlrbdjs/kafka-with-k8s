@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: producer-configmap
+  namespace: project
+data:
+  SERVER_PORT: "8080"
+  KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
+  KAFKA_TOPIC: "cqrs-topic"
+  MYSQL_JDBC_URL: "jdbc:mysql://mysql:3306/cqrs"
+  MYSQL_USERNAME: "root"

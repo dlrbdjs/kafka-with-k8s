@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kafka-longhorn-pvc
+  namespace: project
+spec:
+  accessModes:
+    - ReadWriteOnce
+
+  storageClassName: longhorn
+
+  resources:
+    requests:
+      storage: 5Gi
