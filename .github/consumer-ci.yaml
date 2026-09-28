@@ -20,7 +20,7 @@ permissions:
 
 jobs:
   consumer-ci:
-    name: Consumer 빌드
+    name: Consumer 빌드g
     runs-on: ubuntu-latest
 
     steps:
