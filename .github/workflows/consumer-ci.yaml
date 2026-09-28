@@ -64,71 +64,60 @@ jobs:
           tags: gyueon/testconsumer:sha-${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-  
+
   update-manifest:
     name: Consumer 매니페스트 업데이트
     needs: consumer-ci
 
-    # kustomization.yaml을 수정하고 다시 Push하기 위한 권한
     permissions:
       contents: write
 
-    # main 브랜치에 Push된 경우에만 실행
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     runs-on: ubuntu-latest
 
-    # Producer와 Consumer가 같은 kustomization.yaml을
-    # 동시에 수정하지 않도록 Manifest 작업을 직렬화
     concurrency:
       group: main-manifest-update
       queue: max
 
     steps:
-      # Job 시작 확인
       - name: Consumer 매니페스트 업데이트 시작
         run: echo "Consumer 매니페스트 업데이트를 시작합니다."
 
-      # Job이 실행되는 시점의 최신 main 브랜치 가져오기
       - name: 최신 main 브랜치 Checkout
         uses: actions/checkout@v7
         with:
           ref: main
           fetch-depth: 0
 
-      # 이미지 태그를 변경하기 위한 Kustomize CLI 설치
       - name: Kustomize 설치
         run: |
-          curl -s \
-            "<https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh>" \
+          curl -fsSL \
+            "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" \
             | bash -s -- 5.8.1
 
-          sudo mv kustomize /usr/local/bin/kustomize
+          sudo install -m 0755 kustomize /usr/local/bin/kustomize
 
           kustomize version
 
-      # Consumer 이미지 태그를 현재 Git commit SHA로 변경
       - name: Consumer 이미지 태그 변경
         working-directory: kubernetes/overlays/local
         run: |
           kustomize edit set image \
-            gyueon/testproducer=gyueon/testproducer:sha-${{ github.sha }}
+            gyueon/testconsumer=gyueon/testconsumer:sha-${{ github.sha }}
 
-      # 변경된 kustomization.yaml이 정상적으로 렌더링되는지 확인
       - name: Kustomize 렌더링 결과 검증
         working-directory: kubernetes/overlays/local
         run: |
           kustomize build .
 
-      # 변경된 kustomization.yaml을 Git에 Commit하고 Push
       - name: Consumer 매니페스트 Commit 및 Push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email \
             "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add \
-            kubernetes/overlays/local/kustomization.yaml
+          git add kubernetes/overlays/local/kustomization.yaml
 
           if git diff --cached --quiet; then
             echo "변경된 매니페스트가 없습니다."
