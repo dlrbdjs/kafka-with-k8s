@@ -100,7 +100,7 @@ spec:
 
       containers:
         - name: producer-container
-          image: gyu/testproducer:sha-f5a7a87cc1ebd2557c7d4f15ce2f8e919bdf3bd4
+          image: gyueon/testproducer:sha-f5a7a87cc1ebd2557c7d4f15ce2f8e919bdf3bd4
 
           ports:
             - containerPort: 8080
