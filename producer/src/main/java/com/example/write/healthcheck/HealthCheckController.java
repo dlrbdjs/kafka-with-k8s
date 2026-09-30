@@ -63,7 +63,7 @@ public class HealthCheckController {
         return ResponseEntity.ok("ready");
     }
 
-    @GetMapping("/health/app")
+    @GetMapping("/health/error")
     public String healthCheck() {
         return "success";
     }
