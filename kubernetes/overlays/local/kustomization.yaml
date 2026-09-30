@@ -12,4 +12,4 @@ images:
   newTag: sha-056897c955387c2e02ab590a8e12f9d839a5a41c
 - name: gyueon/testproducer
   newName: gyueon/testproducer
-  newTag: sha-138bd367e7ada97f2eaf014b58dc2c33c478f890
+  newTag: sha-056897c955387c2e02ab590a8e12f9d839a5a41c
