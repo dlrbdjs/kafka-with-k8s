@@ -4,6 +4,6 @@ kind: Kustomization
 namespace: project
 
 resources:
-  - producer-deployment.yaml
+  - producer-rollout.yaml
   - producer-configmap.yaml
   - producer-service.yaml
